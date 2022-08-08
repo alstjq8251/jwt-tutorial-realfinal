@@ -1,5 +1,10 @@
 package com.sparta.memoproject.jwt;
 
+import com.sparta.memoproject.model.Code;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,13 +33,29 @@ public class JwtFilter extends OncePerRequestFilter {
       // 1. Request Header 에서 토큰을 꺼냄
       String jwt = resolveToken(request);
 
-      // 2. validateToken 으로 토큰 유효성 검사
-      // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
-      if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-         Authentication authentication = tokenProvider.getAuthentication(jwt);
-         SecurityContextHolder.getContext().setAuthentication(authentication);
+      if(jwt == null){
+         request.setAttribute("exception", Code.UNKNOWN_ERROR.getCode());
       }
 
+      // 2. validateToken 으로 토큰 유효성 검사
+      // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
+      try {
+         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+            Authentication authentication = tokenProvider.getAuthentication(jwt);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+         }
+      } catch (ExpiredJwtException e){
+         //만료 에러
+         request.setAttribute("exception", Code.EXPIRED_TOKEN.getCode());
+      } catch (MalformedJwtException e){
+         //변조 에러
+         request.setAttribute("exception", Code.WRONG_TYPE_TOKEN.getCode());
+      } catch (SignatureException e){
+         //형식, 길이 에러
+         request.setAttribute("exception", Code.WRONG_TYPE_TOKEN.getCode());
+      } catch(JwtException e){
+         request.setAttribute("exception", Code.UNKNOWN_ERROR);
+      }
       filterChain.doFilter(request, response);
    }
 

@@ -1,8 +1,12 @@
 package com.sparta.memoproject.controller;
 
+import com.sparta.memoproject.dto.MemoDto;
 import com.sparta.memoproject.dto.MemoRequestDto;
+import com.sparta.memoproject.dto.MemoSoloDto;
+import com.sparta.memoproject.model.Comment;
 import com.sparta.memoproject.model.Member;
 import com.sparta.memoproject.model.Memo;
+import com.sparta.memoproject.repository.CommentRepository;
 import com.sparta.memoproject.repository.MemberRepository;
 import com.sparta.memoproject.repository.MemoRepository;
 import com.sparta.memoproject.service.MemoService;
@@ -19,22 +23,29 @@ import java.util.Optional;
 public class MemoController {  //생성 조회 변경 삭제가 필요한데 업데이트 -> service , 나머지 ->Repo가 필요함
 
     private final MemoRepository memoRepository;  // 필수적인 요소이기 때문에 final 선언
+    private final CommentRepository commentRepository;
     private final MemoService memoService;
     private final MemberRepository memberRepository;
 
     @Secured("ROLE_USER")
     @PostMapping("/api/auth/memos")   //생성은 해당 주소로 post방식으로 들어올것고 그렇게 들어오면 아래를 실행한다.
     public Memo creatMemo(@RequestBody MemoRequestDto requestDto) {   //메모를 생성하려면 데이터를 물고다닐 Dto가 필요하다.  // 날아오는 녀석을 그대로 requestDto에 넣어주기 위해서 해당 어노테이션을 씀
-
-        String nickname = memoService.getNickname();
-        Memo memo = memoService.creatMemo(requestDto, nickname);     //Memo에 선언된 오버로딩 생성자로 인해 생성된 memo에 requestDto 내용이 들어감.
-
-        return memoRepository.save(memo);
+        return memoService.creatMemo(requestDto);
     }
 
     @GetMapping("/api/memos")
     public List<Memo> readMemo() {
         return memoRepository.findAllByOrderByModifiedAtDesc();
+    }
+
+    @GetMapping("/api/memos/all")
+    public List<MemoDto> readMemoDto(){
+        return memoService.readMemoDto();
+    }
+
+    @GetMapping("/api/memoDto/{Id}")
+    public MemoSoloDto readMemoSoloDto(@PathVariable Long Id){
+        return memoService.readMemoSoloDto(Id);
     }
 
     @GetMapping("/api/memos/{id}")
@@ -45,14 +56,12 @@ public class MemoController {  //생성 조회 변경 삭제가 필요한데 업
     @Secured("ROLE_USER")
     @PutMapping("/api/auth/memos/{id}")
     public Memo updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {   //RequestBody어노테이션을 써줘야만 Request 안에 Body를 requestDto에 넣어줘야하구나 를 Spring이 안다
-
         return memoService.update(id, requestDto);
     }
 
     @Secured("ROLE_USER")
     @DeleteMapping("/api/auth/memos/{id}")
     public boolean deleteMemo(@PathVariable Long id) {   //RequestBody어노테이션을 써줘야만 Request 안에 Body를 requestDto에 넣어줘야하구나 를 Spring이 안다
-
         return memoService.delete(id);
     }
 }

@@ -1,6 +1,8 @@
 package com.sparta.memoproject.service;
 
+import com.sparta.memoproject.dto.MemoDto;
 import com.sparta.memoproject.dto.MemoRequestDto;
+import com.sparta.memoproject.dto.MemoSoloDto;
 import com.sparta.memoproject.model.Member;
 import com.sparta.memoproject.model.Memo;
 import com.sparta.memoproject.repository.MemberRepository;
@@ -10,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor //final로 선언한 변수가 있으면 꼭 생성해달라는 것
 @Service
@@ -40,12 +42,10 @@ public class MemoService {
     }
 
     @Transactional
-    public Memo creatMemo(MemoRequestDto requestDto, String nickName) {
+    public Memo creatMemo(MemoRequestDto requestDto) {
+        String nickName = getNickname();
         Memo memo = new Memo(requestDto, nickName);
-
-        memoRepository.save(memo);
-
-        return memo;
+        return memoRepository.save(memo);
     }
 
     @Transactional
@@ -58,5 +58,13 @@ public class MemoService {
         }
         memoRepository.deleteById(id);
         return true;
+    }
+
+    public MemoSoloDto readMemoSoloDto(Long Id) {
+        Memo memo = memoRepository.findById(Id)
+                .orElseThrow(() -> new IllegalArgumentException("유저 정보가 없습니다."));
+        MemoSoloDto memoSoloDto = new MemoSoloDto(memo);
+        return memoSoloDto;
+
     }
 }
