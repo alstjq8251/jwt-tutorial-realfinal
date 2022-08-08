@@ -43,7 +43,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
 
-        if(!memoService.getNickname().equals(memo.getMemberName())) {
+        if (!memoService.getNickname().equals(memo.getMemberName())) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
         comment.setComment(commentRequestDto);
@@ -56,7 +56,7 @@ public class CommentService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
-        if(!memoService.getNickname().equals(memo.getMemberName())) {
+        if (!memoService.getNickname().equals(memo.getMemberName())) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
         memo.deleteComment(comment);

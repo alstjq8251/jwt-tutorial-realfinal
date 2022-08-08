@@ -1,6 +1,9 @@
 package com.sparta.memoproject.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.memoproject.Timestamped;
 import com.sparta.memoproject.dto.CommentRequestDto;
 import lombok.Getter;

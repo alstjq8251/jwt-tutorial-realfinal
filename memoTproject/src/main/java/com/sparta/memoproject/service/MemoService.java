@@ -28,6 +28,15 @@ public class MemoService {
         return member.get().getNickname();
     }
 
+    public List<MemoDto> readMemoDto(){
+        List<Memo> memoList = memoRepository.findAllByOrderByModifiedAtDesc();
+        List<MemoDto> memoDtoList = new ArrayList<>();
+        for (Memo memo : memoList){
+            memoDtoList.add(new MemoDto(memo));
+        }
+        return memoDtoList;
+    }
+
     @Transactional //업데이트 할 때 이게 DB에 꼭 반영돼야 한다고 해주는 녀석
     public Memo update(Long id, MemoRequestDto requestDto) { //[1번]업데이트 메소드를 선언하고 id와 변경시킬 내용을 담은 녀석이 필요    [6번] return을 보고 반환타입 Long
         Memo memo = memoRepository.findById(id).orElseThrow( //[3번]  수정할 id에 해당하는 데이터를 repo에서 찾고 해당id를 갖는 memo를 호출한다.
