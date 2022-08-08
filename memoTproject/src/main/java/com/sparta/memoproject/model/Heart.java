@@ -32,20 +32,13 @@ public class Heart extends Timestamped {
     @JsonBackReference
     private Comment comment;
 
-    @Column(name ="Parent_Id")
-    private int parent;
 
     public Heart(String nickname, Memo memo) {
         this.nickname = nickname;
         this.memo = memo;
-        this.parent = 2;
     }
     public Heart(String nickname, Comment comment) {
         this.nickname = nickname;
         this.comment = comment;
-        if(comment.getParent() != null)
-            this.parent = 1;
-        else
-            this.parent = 0;
     }
 }

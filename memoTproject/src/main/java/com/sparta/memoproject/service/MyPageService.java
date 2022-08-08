@@ -34,21 +34,20 @@ public class MyPageService {
         List<Comment> childcommentList = commentRepository.findAllByMemberNameAndParent_IdIsNotNull(nickname);
 
         List<Heart> heartcheckmemoList = heartRepository.findAllByNicknameAndMemo_IdIsNotNull(nickname);
+
         List<Memo> heartmemoList = new ArrayList<>();
         for(int i=0; i<heartcheckmemoList.size(); i++){
-            heartmemoList.add(heartcheckmemoList.get(i).getMemo());
+            heartmemoList.add(heartcheckmemoList.get(i).getMemo()); // 게시글
         }
 
-        List<Heart> heartcheckcommentList = heartRepository.findAllByNicknameAndParent(nickname,zero);
+        List<Heart> heartcheckcommentList = heartRepository.findAllByNicknameAndMemo_IdIsNull(nickname);
         List<Comment> heartcommentList = new ArrayList<>();
-        for(int i=0; i<heartcheckcommentList.size(); i++){
-            heartcommentList.add(heartcheckcommentList.get(i).getComment());
-        }
-
-        List<Heart> heartcheckchildcommentList = heartRepository.findAllByNicknameAndParent(nickname,one);
         List<Comment> heartchildcommentList = new ArrayList<>();
-        for(int i=0; i<heartcheckchildcommentList.size(); i++){
-            heartchildcommentList.add(heartcheckchildcommentList.get(i).getComment());
+        for(int i=0; i<heartcheckcommentList.size(); i++){
+            if(heartcheckcommentList.get(i).getComment().getParent() == null)
+                heartcommentList.add(heartcheckcommentList.get(i).getComment()); // 댓글
+            else
+                heartchildcommentList.add(heartcheckcommentList.get(i).getComment()); // 대댓글
         }
 
         MyPageDto myPageDto = new MyPageDto();

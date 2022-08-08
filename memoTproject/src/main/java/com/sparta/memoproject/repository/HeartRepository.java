@@ -31,7 +31,7 @@ public interface HeartRepository extends JpaRepository<Heart, Long> {
 
     List<Heart> findAllByNicknameAndParent(String nickname, int zero);
 
-    List<Heart> findAllByNicknameAndMemoIdIsNotNull(String nickname);
-
     List<Heart> findAllByNicknameAndMemo_IdIsNotNull(String nickname);
+
+    List<Heart> findAllByNicknameAndMemo_IdIsNull(String nickname);
 }
